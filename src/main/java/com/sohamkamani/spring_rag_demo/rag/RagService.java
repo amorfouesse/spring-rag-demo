@@ -31,23 +31,34 @@ public class RagService {
     }
 
     public String retrieveAndGenerate(String message) {
+        // le message de l'utilisateur est convertit en embbeding
+        // puis effectue une recherche de similarité sémantique pour trouver les bouts de textes les plus proches du sens de la question
+
         List<Document> similarDocuments = vectorStore
                 .similaritySearch(SearchRequest
                         .builder()
                         .query(message)
+                        // ne récupère que les 4 segments les plus pertinents pour ne pas surcharger le contexte de l'IA.
                         .topK(4)
                         .build());
+
         System.out.println(">>> Similar documents: " + similarDocuments);
+        // les llm ne prennent pas d'objets Java en entrée, ils ne comprennent que le texte brut.
+        // On concatène donc les 4 documents trouvés, séparés par des sauts de ligne.
         String information = similarDocuments.stream()
                 .map(Document::getText)
                 .collect(Collectors.joining("\n"));
 
+        // utilise le template de réponse à l'utilisateur
         SystemPromptTemplate systemPromptTemplate = new SystemPromptTemplate(ragPromptTemplate);
         Prompt prompt = new Prompt(List.of(
                 systemPromptTemplate.createMessage(
                         Map.of("information", information)),
                 new UserMessage(message)));
         System.out.println(">>> Prompt: " + prompt.getContents());
-        return chatClient.prompt(prompt).call().content(); // Changed ChatClient usage
+
+        //l'appel final au llm avec Instructions + Contexte documentaire + Question utilisateur
+        // content -> renvoie uniquement la réponse
+        return chatClient.prompt(prompt).call().content();
     }
 }
