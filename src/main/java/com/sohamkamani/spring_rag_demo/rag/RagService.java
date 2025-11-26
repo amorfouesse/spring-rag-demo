@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.UserMessage; // Changed import
 import org.springframework.ai.chat.prompt.Prompt;
@@ -20,6 +22,7 @@ public class RagService {
 
     private final ChatClient chatClient;
     private final VectorStore vectorStore;
+    private final Logger logger = LoggerFactory.getLogger(RagService.class);
 
     @Value("classpath:/prompts/rag-prompt.st")
     private Resource ragPromptTemplate;
@@ -39,10 +42,10 @@ public class RagService {
                         .builder()
                         .query(message)
                         // ne récupère que les 4 segments les plus pertinents pour ne pas surcharger le contexte de l'IA.
-                        .topK(4)
+                        .topK(5)
                         .build());
 
-        System.out.println(">>> Similar documents: " + similarDocuments);
+        logger.info("\n>>> Similar documents: {}",similarDocuments);
         // les llm ne prennent pas d'objets Java en entrée, ils ne comprennent que le texte brut.
         // On concatène donc les 4 documents trouvés, séparés par des sauts de ligne.
         String information = similarDocuments.stream()
@@ -55,7 +58,7 @@ public class RagService {
                 systemPromptTemplate.createMessage(
                         Map.of("information", information)),
                 new UserMessage(message)));
-        System.out.println(">>> Prompt: " + prompt.getContents());
+        logger.info("\n>>> Prompt: {}", prompt.getContents());
 
         //l'appel final au llm avec Instructions + Contexte documentaire + Question utilisateur
         // content -> renvoie uniquement la réponse
