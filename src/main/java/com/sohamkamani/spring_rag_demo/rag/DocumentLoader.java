@@ -23,6 +23,8 @@ public class DocumentLoader implements CommandLineRunner {
     public void run(String... args) {
         System.out.println("Suppression des anciens vecteurs...");
         jdbcTemplate.execute("TRUNCATE TABLE vector_store CASCADE");
+
+        //chunquer en une seul phrase permet d'avoir un sens très préçis.
         List<Document> documents = List.of(
                 new Document(
                         "La potion de soin, est un élixir à base de citron fermenté, d'eau et de sucre qui se passe en 2 étapes de fermentation."),
@@ -34,6 +36,13 @@ public class DocumentLoader implements CommandLineRunner {
                         "Si des bulles apparaissent en mélangeant, c'est bon, la première phase de fermentation est terminer."),
                 new Document(
                         "Une fois la première phase de fermentation passé, filtrer la solution dans la bouteille qui se ferme hermétiquement et patienté jusqu'a avoir du gaz qui se forme !"));
+       /* List<Document> documents = List.of(
+                new Document("StarlightDB is a serverless graph database designed for real-time analytics on complex, interconnected data."),
+                new Document("The core of StarlightDB is its 'Quantum-Leap' query engine, which uses speculative execution to deliver query results up to 100x faster than traditional graph databases."),
+                new Document("StarlightDB features 'Chrono-Sync' for effortless time-travel queries, allowing developers to query the state of their graph at any point in the past."),
+                new Document("StarlightDB includes a built-in visualization tool called 'Nebula' that renders interactive 3D graphs directly within the development environment for easier analysis."),
+                new Document("Security in StarlightDB is handled by 'Cosmic Shield', which provides end-to-end encryption and fine-grained access control at the node and edge level.")
+        );*/
         vectorStore.add(documents);
         System.out.println("Documents loaded into VectorStore.");
     }
