@@ -41,9 +41,16 @@ public class RagService {
                 .similaritySearch(SearchRequest
                         .builder()
                         .query(message)
-                        // ne récupère que les 4 segments les plus pertinents pour ne pas surcharger le contexte de l'IA.
-                        .topK(5)
+                        // plus le topK est élevé, plus ça sera couteux en nombre de tocken mais avec un context bien généreux,
+                        //plus il est bas, plus le retour sera peu couteux en tocken mais préçis et synthétisé
+                        .topK(4)
                         .build());
+
+        if(similarDocuments == null || similarDocuments.isEmpty()) {
+            // On retourne tout de suite une réponse par défaut sans appeler l'IA
+            logger.info("Aucun document trouvé pour le contexte.");
+            return "Je ne dispose pas d'information suffisante dans ma base documentaire pour vous répondre.";
+        }
 
         logger.info("\n>>> Similar documents: {}",similarDocuments);
         // les llm ne prennent pas d'objets Java en entrée, ils ne comprennent que le texte brut.
