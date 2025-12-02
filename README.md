@@ -29,5 +29,5 @@ gradle bootRun
 ```
 Dans un terminal git bash faire cette commande pour connaitre les informations en BDD: 
 ```
- curl -X POST -H "Content-Type: application/json" http://localhost:8080/ai/rag -d '{"message": "comment faire une potion de soin efficace ?"}'
+ curl -X POST -H "Content-Type: application/json" http://localhost:8080/ai/rag -d '{"message": "a quoi ressemble les orks ?"}'
 ```
