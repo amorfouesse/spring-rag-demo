@@ -16,9 +16,13 @@
 *   **RagController:** A REST controller that exposes an endpoint (`/ai/rag`) to interact with the `RagService`.
 *   **`rag-prompt.st`:** A prompt template used by the `RagService` to guide the AI model's response, ensuring it uses the provided information.
 
+## How to setup
+
+Pour crée la base de donnée vectorisé suivé la step 2 :
+https://www.sohamkamani.com/java/spring-ai-rag-application/
 ## How to Run
 
-Lancé le serveur:
+Lancer le serveur:
 ```
 gradle bootRun
 ```
